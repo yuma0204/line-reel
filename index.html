@@ -1,0 +1,409 @@
+<!doctype html><meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; media-src data: blob:; base-uri 'none'; form-action 'none'">
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Line Reel</title>
+<style>
+:root{--bg:#0b0b0b;--panel:#151515;--panel2:#1c1c1c;--gold:#f5c26b;--gold2:#bfa36a;--text:#f3ede1;--mute:#a79f90;--line:#2c2820}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:radial-gradient(1200px 500px at 50% -150px,#2a2113 0,#0b0b0b 65%) no-repeat,var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Hiragino Sans","Noto Sans JP","Segoe UI",sans-serif;line-height:1.6;min-height:100vh}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 16px 40px}
+header{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.logo{display:flex;align-items:center;gap:10px;font-family:Georgia,"Times New Roman",serif;color:var(--gold);font-size:24px;letter-spacing:2px}
+.logo .ring{width:38px;height:38px;border-radius:50%;border:3px solid var(--gold);display:grid;place-items:center;font-size:18px}
+.lang{display:flex;border:1px solid var(--gold2);border-radius:20px;overflow:hidden}
+.lang button{background:none;border:0;padding:6px 12px;font-size:13px;color:var(--gold2)}
+.lang button[aria-pressed=true]{background:var(--gold);color:#111;font-weight:700}
+.hero{text-align:center;padding:18px 0 8px}
+.hero small{display:block;color:var(--gold);letter-spacing:5px;font-size:12px}
+.hero h1{margin:6px 0 4px;font-family:Georgia,serif;font-weight:400;color:var(--gold);font-size:clamp(30px,7vw,48px);letter-spacing:3px}
+.hero p{margin:0;color:var(--gold2);letter-spacing:2px;font-size:14px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin:22px 0 12px}
+.tabs{display:flex;gap:6px}
+.tab{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 14px;font-size:13px;color:var(--mute)}
+.tab[aria-selected=true]{border-color:var(--gold);color:var(--gold)}
+.tools{display:flex;gap:6px;flex-wrap:wrap}
+.chip{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:6px 12px;font-size:13px;color:var(--text)}
+.chip:hover{border-color:var(--gold2)}
+.btn{background:var(--gold);color:#111;border:0;border-radius:26px;padding:12px 22px;font-weight:700;font-size:15px;box-shadow:0 4px 18px rgba(245,194,107,.25);transition:transform .15s}
+.btn:hover{transform:translateY(-1px)}
+.btn.ghost{background:none;border:2px solid var(--gold);color:var(--gold);box-shadow:none}
+.rollbox{position:relative;background:#222;border-radius:6px}
+.roll{display:flex;overflow-x:auto;scroll-snap-type:x proximity;scroll-behavior:smooth;padding:0 6px;scrollbar-color:var(--gold2) #222}
+.frame{flex:none;width:198px;scroll-snap-align:start;background:#1a1a1a;border-right:2px solid #0d0d0d}
+.holes{height:9px;margin:9px 0;background:repeating-linear-gradient(90deg,transparent 0 5px,#0b0b0b 5px 17px,transparent 17px 22px);opacity:1;border-radius:2px}
+.pic{position:relative;margin:0 10px;height:196px;padding:14px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;border:2px solid transparent;transition:transform .2s,border-color .2s}
+.pic:hover{transform:scale(1.02)}
+.pic[aria-pressed=true]{border-color:var(--gold);box-shadow:0 0 0 2px rgba(245,194,107,.25),0 0 22px rgba(245,194,107,.2)}
+.q{font-size:17px;font-weight:700;line-height:1.65;color:#fff;overflow-wrap:anywhere}
+.src{font-size:11px;color:var(--gold);margin-top:10px}
+.badge{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;background:var(--gold);color:#111;font-weight:800;font-size:13px;display:grid;place-items:center}
+.meta{display:flex;align-items:center;justify-content:space-between;padding:6px 10px 0;color:var(--mute);font-size:11px;letter-spacing:1px}
+.meta .b{display:flex;gap:2px}
+.icon{background:none;border:0;font-size:17px;padding:2px 6px;border-radius:6px;color:var(--mute)}
+.icon.on{color:#ff7a8a}
+.icon:hover{background:#2a2a2a}
+.arrow{position:absolute;top:50%;transform:translateY(-50%);width:36px;height:36px;border-radius:50%;border:0;background:rgba(245,194,107,.92);color:#111;font-size:16px;z-index:2;display:none}
+.arrow.l{left:-8px}.arrow.r{right:-8px}
+@media(min-width:700px){.arrow{display:block}}
+.empty{padding:50px 20px;text-align:center;color:var(--mute);width:100%}
+.hint{color:var(--mute);font-size:12px;margin:8px 2px 0;text-align:center}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;margin-top:22px}
+.panel h2{margin:0 0 4px;font-size:17px;color:var(--gold);letter-spacing:1px}
+.panel .sub{margin:0 0 14px;color:var(--mute);font-size:13px}
+.grid{display:grid;gap:12px}
+@media(min-width:700px){.grid.two{grid-template-columns:1fr 1fr}}
+label{display:block;font-size:12px;color:var(--gold2);margin-bottom:4px;letter-spacing:.5px}
+input[type=text],textarea{width:100%;background:#0e0e0e;border:1px solid #3a3426;border-radius:10px;padding:10px 12px;color:var(--text)}
+textarea{min-height:76px;resize:vertical}
+input::placeholder,textarea::placeholder{color:#6f685a}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{background:#0e0e0e;border:1px solid #3a3426;border-radius:20px;padding:7px 14px;font-size:13px;color:var(--mute)}
+.seg button[aria-pressed=true]{border-color:var(--gold);color:var(--gold);background:#1d170a}
+.sw{width:34px;height:34px;border-radius:8px;border:2px solid transparent!important;padding:0!important}
+.sw[aria-pressed=true]{border-color:var(--gold)!important;box-shadow:0 0 0 2px #000 inset}
+.actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap}
+.summary{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px;min-height:30px}
+.pill{background:#241d0e;border:1px solid #4a3c1c;color:var(--gold);border-radius:14px;padding:3px 10px;font-size:12px;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(20px);background:var(--gold);color:#111;padding:10px 18px;border-radius:24px;font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:80;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%)}
+footer{text-align:center;color:#6f685a;font-size:12px;margin-top:26px}
+/* theater */
+.theater{position:fixed;inset:0;background:#000;z-index:60;display:flex;align-items:center;justify-content:center}
+.theater[hidden]{display:none}
+.bar{position:absolute;left:0;right:0;height:11vh;background:#000;z-index:2}
+.bar.t{top:0}.bar.b{bottom:0}
+.stage{text-align:center;padding:30px;max-width:760px;width:100%}
+.stage>*{animation:fade 1s ease both}
+@keyframes fade{from{opacity:0;transform:scale(.96);filter:blur(6px)}to{opacity:1;transform:none;filter:none}}
+.t-tag{color:#aaa;letter-spacing:5px;font-size:clamp(12px,3vw,16px)}
+.t-q{color:var(--gold);font-weight:700;font-size:clamp(24px,6.5vw,46px);line-height:1.6;overflow-wrap:anywhere;text-shadow:0 0 28px rgba(245,194,107,.35)}
+.t-src{color:#aaa;letter-spacing:3px;font-size:clamp(11px,2.8vw,14px);margin-top:20px}
+.t-title{font-family:Georgia,serif;color:var(--gold);font-size:clamp(30px,8vw,60px);letter-spacing:6px;text-transform:uppercase;overflow-wrap:anywhere}
+.t-end{color:#aaa;letter-spacing:5px;font-size:13px;margin-top:16px}
+.prog{position:absolute;left:0;bottom:11vh;height:3px;background:var(--gold);z-index:3;transition:width .6s}
+.tclose,.treplay{position:absolute;z-index:4}
+.tclose{top:calc(11vh + 8px);right:14px;background:rgba(255,255,255,.12);border:0;border-radius:20px;padding:8px 14px;color:#fff;font-size:14px}
+.treplay{bottom:calc(11vh + 18px);left:50%;transform:translateX(-50%)}
+.treplay[hidden]{display:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo"><span class="ring" aria-hidden="true">🎞️</span><span>Line Reel</span></div>
+  <div class="lang" data-demo="lang-switch" role="group" data-ia="langAria">
+    <button type="button" data-l="ja" data-demo="lang-ja">日本語</button>
+    <button type="button" data-l="en" data-demo="lang-en">EN</button>
+  </div>
+</header>
+
+<section class="hero">
+  <small data-i="rollLabel"></small>
+  <h1 data-i="heroTitle"></h1>
+  <p data-i="tagline"></p>
+</section>
+
+<div class="toolbar">
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" type="button" data-f="all" data-demo="tab-all"></button>
+    <button class="tab" role="tab" type="button" data-f="fav" data-demo="tab-fav"></button>
+  </div>
+  <div class="tools">
+    <button class="chip" type="button" id="selFav" data-demo="select-favs" data-i="selFav"></button>
+    <button class="chip" type="button" id="selClear" data-demo="select-clear" data-i="selClear"></button>
+    <button class="btn" type="button" id="addBtn" data-demo="add-frame-open" data-i="addFrame"></button>
+  </div>
+</div>
+
+<div class="rollbox">
+  <button class="arrow l" type="button" id="prev" data-demo="roll-prev" data-ia="prevAria">◀</button>
+  <div class="roll" id="roll" data-demo="film-roll" tabindex="0" data-ia="rollAria"></div>
+  <button class="arrow r" type="button" id="next" data-demo="roll-next" data-ia="nextAria">▶</button>
+</div>
+<p class="hint" data-i="hint"></p>
+
+<section class="panel" id="addPanel" hidden data-demo="add-panel">
+  <h2 data-i="newFrame"></h2>
+  <p class="sub" data-i="newSub"></p>
+  <div class="grid">
+    <div><label for="fq" data-i="lQuote"></label><textarea id="fq" data-demo="input-quote" data-ip="pQuote" maxlength="80"></textarea></div>
+    <div class="grid two">
+      <div><label for="ft" data-i="lTitle"></label><input type="text" id="ft" data-demo="input-title" data-ip="pTitle" maxlength="40"></div>
+      <div><label for="fe" data-i="lEp"></label><input type="text" id="fe" data-demo="input-ep" data-ip="pEp" maxlength="20"></div>
+    </div>
+    <div class="grid two">
+      <div><label data-i="lKind"></label>
+        <div class="seg" id="kindSeg">
+          <button type="button" data-k="drama" data-demo="kind-drama" data-i="kDrama"></button>
+          <button type="button" data-k="movie" data-demo="kind-movie" data-i="kMovie"></button>
+        </div></div>
+      <div><label data-i="lTone"></label>
+        <div class="seg" id="toneSeg"></div></div>
+    </div>
+  </div>
+  <div class="actions">
+    <button class="btn" type="button" id="saveBtn" data-demo="save-frame" data-i="save"></button>
+    <button class="btn ghost" type="button" id="cancelBtn" data-demo="cancel-add" data-i="cancel"></button>
+  </div>
+</section>
+
+<section class="panel" id="trailerPanel">
+  <h2 data-i="tmTitle"></h2>
+  <p class="sub" data-i="tmSub"></p>
+  <div class="summary" id="summary" data-demo="trailer-summary" aria-live="polite"></div>
+  <div class="grid two">
+    <div><label for="tg" data-i="lTag"></label><input type="text" id="tg" data-demo="input-tagline" data-ip="pTag" maxlength="40"></div>
+    <div><label for="tt" data-i="lTrTitle"></label><input type="text" id="tt" data-demo="input-trailer-title" data-ip="pTrTitle" maxlength="24"></div>
+  </div>
+  <div class="actions"><button class="btn" type="button" id="makeBtn" data-demo="make-trailer" data-i="make"></button></div>
+</section>
+
+<footer data-i="foot"></footer>
+</div>
+
+<div class="theater" id="theater" hidden role="dialog" aria-modal="true" data-ia="theaterAria" data-demo="trailer-theater">
+  <div class="bar t"></div><div class="bar b"></div>
+  <div class="stage" id="stage" data-demo="trailer-stage" aria-live="polite"></div>
+  <div class="prog" id="prog"></div>
+  <button class="tclose" type="button" id="tclose" data-demo="trailer-close" data-i="close"></button>
+  <button class="btn treplay" type="button" id="treplay" data-demo="trailer-replay" data-i="replay" hidden></button>
+</div>
+<div class="toast" id="toast" role="status" data-demo="toast"></div>
+
+<script>
+const I18N = {
+  ja: {
+    title:"Line Reel — 名セリフを、予告編に。", langAria:"言語切り替え",
+    rollLabel:"MY FILM ROLL", heroTitle:"Line Reel", tagline:"名セリフを、予告編に。",
+    tabAll:"すべて", tabFav:"♡ お気に入り", selFav:"♡を選ぶ", selClear:"選択を解除", addFrame:"＋ 新しい1コマ",
+    hint:"コマをタップで予告編に選択 ／ 横にスクロールして名場面をめぐろう",
+    rollAria:"フィルムロール(横スクロール)", prevAria:"前へ", nextAria:"次へ",
+    emptyAll:"まだ1コマもありません。「＋ 新しい1コマ」から追加しましょう。", emptyFav:"お気に入りはまだありません。コマの ♡ を押してみましょう。",
+    frame:"FRAME", favAria:"お気に入り切り替え", delAria:"このコマを削除", selAria:"予告編に選ぶ",
+    newFrame:"新しい1コマ", newSub:"心に残ったセリフを、フィルムの1コマに。",
+    lQuote:"セリフ", pQuote:"例: また明日。", lTitle:"作品名", pTitle:"例: 朝焼けの約束", lEp:"話数・メモ(任意)", pEp:"例: 第3話",
+    lKind:"種類", kDrama:"📺 ドラマ", kMovie:"🎬 映画", lTone:"フィルムの色",
+    save:"コマを追加", cancel:"キャンセル",
+    tmTitle:"🎬 名セリフ予告編づくり", tmSub:"選んだコマが、選んだ順に予告編として流れます。",
+    lTag:"オープニングの一言", pTag:"この夏、あなたの心に刺さる", lTrTitle:"予告編のタイトル", pTrTitle:"MY TRAILER",
+    make:"🎬 予告編をつくる", noneSel:"まだコマが選ばれていません", selCount:"本のコマ・約{s}秒",
+    foot:"Line Reel — 作品名はすべて架空のサンプルです。",
+    close:"✕ 閉じる", replay:"↻ もう一度見る", theaterAria:"予告編プレーヤー", coming:"🎬 COMING SOON",
+    tAdded:"1コマ追加しました 🎞️", tNeedQ:"セリフを入力してください", tDel:"コマを削除しました", tNeedSel:"予告編にするコマを1つ以上選んでください",
+    tNoFav:"お気に入りのコマがありません", tSelFav:"お気に入りを選びました", tCleared:"選択を解除しました",
+    defTitle:"無題", dramaPre:"ドラマ", moviePre:"映画"
+  },
+  en: {
+    title:"Line Reel — Turn great lines into a trailer", langAria:"Language switch",
+    rollLabel:"MY FILM ROLL", heroTitle:"Line Reel", tagline:"Turn your favorite lines into a trailer.",
+    tabAll:"All", tabFav:"♡ Favorites", selFav:"Pick ♡", selClear:"Clear picks", addFrame:"+ New frame",
+    hint:"Tap a frame to add it to your trailer · Scroll sideways to browse",
+    rollAria:"Film roll (scrolls sideways)", prevAria:"Previous", nextAria:"Next",
+    emptyAll:"No frames yet. Tap \"+ New frame\" to add one.", emptyFav:"No favorites yet. Tap the ♡ on a frame.",
+    frame:"FRAME", favAria:"Toggle favorite", delAria:"Delete this frame", selAria:"Select for trailer",
+    newFrame:"New frame", newSub:"Turn a line that stayed with you into a film frame.",
+    lQuote:"Line", pQuote:"e.g. See you tomorrow.", lTitle:"Title", pTitle:"e.g. Promise at Dawn", lEp:"Episode / note (optional)", pEp:"e.g. Ep. 3",
+    lKind:"Type", kDrama:"📺 Drama", kMovie:"🎬 Movie", lTone:"Film color",
+    save:"Add frame", cancel:"Cancel",
+    tmTitle:"🎬 Trailer maker", tmSub:"Your selected frames play as a trailer, in the order you picked them.",
+    lTag:"Opening line", pTag:"This summer, a line will stay with you", lTrTitle:"Trailer title", pTrTitle:"MY TRAILER",
+    make:"🎬 Make my trailer", noneSel:"No frames selected yet", selCount:"frames · about {s} sec",
+    foot:"Line Reel — All titles are made-up samples.",
+    close:"✕ Close", replay:"↻ Watch again", theaterAria:"Trailer player", coming:"🎬 COMING SOON",
+    tAdded:"Frame added 🎞️", tNeedQ:"Please enter a line", tDel:"Frame deleted", tNeedSel:"Pick at least one frame for the trailer",
+    tNoFav:"No favorite frames yet", tSelFav:"Picked your favorites", tCleared:"Picks cleared",
+    defTitle:"Untitled", dramaPre:"Drama", moviePre:"Movie"
+  }
+};
+const TONES = ["linear-gradient(135deg,#243b55,#141e30)","linear-gradient(135deg,#5b2a3c,#2a1420)","linear-gradient(135deg,#2f4a3a,#121f18)","linear-gradient(135deg,#5a4320,#241a0c)","linear-gradient(135deg,#3b2a5a,#16102a)","linear-gradient(135deg,#3a3a3a,#111)"];
+const SAMPLE = [
+ {id:1,q:{ja:"「大丈夫、私がついてる。」",en:"“It's okay. I'm right here with you.”"},s:{ja:"ドラマ『朝焼けの約束』第3話",en:"Drama “Promise at Dawn” Ep. 3"},tone:0,fav:true},
+ {id:2,q:{ja:"「また明日。」",en:"“See you tomorrow.”"},s:{ja:"映画『夜行列車のむこう』",en:"Movie “Beyond the Night Train”"},tone:1,fav:false},
+ {id:3,q:{ja:"「逃げてもいい。でも、止まらないで。」",en:"“You can run. Just don't stop.”"},s:{ja:"ドラマ『ハーバーライト』第8話",en:"Drama “Harborlight” Ep. 8"},tone:2,fav:true},
+ {id:4,q:{ja:"「あの夏の続きを、今から始めよう。」",en:"“Let's start the rest of that summer, right now.”"},s:{ja:"映画『八月の手紙』",en:"Movie “Letters of August”"},tone:3,fav:false},
+ {id:5,q:{ja:"「名前を呼ばれた、それだけで十分だった。」",en:"“Hearing my name was enough.”"},s:{ja:"ドラマ『灯りの町』第1話",en:"Drama “Town of Lanterns” Ep. 1"},tone:4,fav:true},
+ {id:6,q:{ja:"「星は、見えなくてもそこにある。」",en:"“The stars are there, even when you can't see them.”"},s:{ja:"映画『ミッドナイト・カフェ』",en:"Movie “Midnight Café”"},tone:0,fav:false}
+];
+const $ = s => document.querySelector(s);
+const $$ = s => [...document.querySelectorAll(s)];
+let lang = "en", frames = [], selected = [], filter = "all", kind = "drama", tone = 0, toastTimer, trTimer;
+
+function pickLang(){
+  if (window.APP_LANG === "ja" || window.APP_LANG === "en") return window.APP_LANG;
+  try { const p = new URLSearchParams(location.search).get("lang"); if (p === "ja" || p === "en") return p; } catch(e){}
+  try { const s = localStorage.getItem("lang"); if (s === "ja" || s === "en") return s; } catch(e){}
+  return "en";
+}
+const t = k => I18N[lang][k];
+const tx = v => (v && typeof v === "object") ? v[lang] : v;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function load(){
+  try { const r = localStorage.getItem("linereel.frames"); if (r){ const a = JSON.parse(r); if (Array.isArray(a) && a.length) return a; } } catch(e){}
+  return JSON.parse(JSON.stringify(SAMPLE));
+}
+function save(){ try { localStorage.setItem("linereel.frames", JSON.stringify(frames)); } catch(e){} }
+
+function toast(msg){
+  const el = $("#toast"); el.textContent = msg; el.classList.add("show");
+  clearTimeout(toastTimer); toastTimer = setTimeout(()=>el.classList.remove("show"), 2200);
+}
+
+function renderRoll(){
+  const list = frames.map((f,i)=>({f,no:i+1})).filter(x => filter === "all" || x.f.fav);
+  const roll = $("#roll");
+  if (!list.length){ roll.innerHTML = `<div class="empty">${esc(t(filter==="fav"?"emptyFav":"emptyAll"))}</div>`; return; }
+  roll.innerHTML = list.map(({f,no}) => {
+    const si = selected.indexOf(f.id);
+    return `<div class="frame"><div class="holes"></div>
+      <div class="pic" role="button" tabindex="0" aria-pressed="${si>=0}" aria-label="${esc(t("selAria"))}: ${esc(tx(f.q))}" data-id="${f.id}" data-demo="frame-card-${f.id}" style="background:${TONES[f.tone%TONES.length]}">
+        ${si>=0?`<span class="badge">${si+1}</span>`:""}
+        <div class="q">${esc(tx(f.q))}</div><div class="src">— ${esc(tx(f.s))}</div></div>
+      <div class="meta"><span>${t("frame")} ${String(no).padStart(3,"0")}</span>
+        <span class="b"><button class="icon ${f.fav?"on":""}" type="button" data-act="fav" data-id="${f.id}" data-demo="fav-btn-${f.id}" aria-pressed="${!!f.fav}" aria-label="${esc(t("favAria"))}">${f.fav?"♥":"♡"}</button>
+        <button class="icon" type="button" data-act="del" data-id="${f.id}" data-demo="del-btn-${f.id}" aria-label="${esc(t("delAria"))}">🗑</button></span></div>
+      <div class="holes"></div></div>`;
+  }).join("");
+}
+function renderSummary(){
+  const el = $("#summary");
+  if (!selected.length){ el.innerHTML = `<span class="pill" style="color:#a79f90;border-color:#333;background:none">${esc(t("noneSel"))}</span>`; return; }
+  const secs = 3 + selected.length*3 + 3;
+  const pills = selected.map((id,i)=>{ const f = frames.find(x=>x.id===id); return f ? `<span class="pill">${i+1}. ${esc(tx(f.q))}</span>` : ""; }).join("");
+  el.innerHTML = pills + `<span class="pill" style="background:none;border-color:#333;color:#a79f90">${selected.length} ${esc(t("selCount").replace("{s}",secs))}</span>`;
+}
+function renderTabs(){
+  $$(".tab").forEach(b=>{
+    const k = b.dataset.f;
+    b.textContent = t(k==="all"?"tabAll":"tabFav") + " " + (k==="all"?frames.length:frames.filter(f=>f.fav).length);
+    b.setAttribute("aria-selected", filter===k);
+  });
+}
+function renderSegs(){
+  $$("#kindSeg button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.k===kind));
+  $("#toneSeg").innerHTML = TONES.map((g,i)=>`<button type="button" class="sw" data-tone="${i}" data-demo="tone-${i}" aria-pressed="${i===tone}" aria-label="${esc(t("lTone"))} ${i+1}" style="background:${g}"></button>`).join("");
+}
+function render(){ renderTabs(); renderRoll(); renderSummary(); renderSegs(); }
+
+function applyLang(){
+  document.documentElement.lang = lang;
+  document.title = t("title");
+  $$("[data-i]").forEach(e=>{ e.textContent = t(e.dataset.i); });
+  $$("[data-ip]").forEach(e=>{ e.placeholder = t(e.dataset.ip); });
+  $$("[data-ia]").forEach(e=>{ e.setAttribute("aria-label", t(e.dataset.ia)); });
+  $$(".lang button").forEach(b=>b.setAttribute("aria-pressed", b.dataset.l===lang));
+  render();
+}
+function setLang(l){
+  lang = l;
+  try { localStorage.setItem("lang", l); } catch(e){}
+  $("#toast").classList.remove("show");
+  applyLang();
+}
+
+function toggleSel(id){
+  const i = selected.indexOf(id);
+  if (i>=0) selected.splice(i,1); else selected.push(id);
+  renderRoll(); renderSummary();
+}
+
+/* trailer */
+function buildSteps(){
+  const tag = $("#tg").value.trim() || t("pTag");
+  const ttl = $("#tt").value.trim() || t("pTrTitle");
+  const steps = [{type:"tag",text:tag}];
+  selected.forEach(id=>{ const f = frames.find(x=>x.id===id); if (f) steps.push({type:"q",f}); });
+  steps.push({type:"end",text:ttl});
+  return steps;
+}
+let steps = [], si = 0;
+function showStep(){
+  const s = steps[si], st = $("#stage");
+  if (s.type==="tag") st.innerHTML = `<div class="t-tag">${esc(s.text)}</div>`;
+  else if (s.type==="q") st.innerHTML = `<div class="t-q">${esc(tx(s.f.q))}</div><div class="t-src">${esc(tx(s.f.s))}</div>`;
+  else st.innerHTML = `<div class="t-tag">LINE REEL PRESENTS</div><div class="t-title" style="margin-top:22px">${esc(s.text)}</div><div class="t-end">${esc(t("coming"))}</div>`;
+  $("#prog").style.width = ((si+1)/steps.length*100)+"%";
+  const last = si === steps.length-1;
+  $("#treplay").hidden = !last;
+  clearTimeout(trTimer);
+  if (!last) trTimer = setTimeout(()=>{ si++; showStep(); }, s.type==="tag"?2600:3200);
+}
+function playTrailer(){
+  if (!selected.length){ toast(t("tNeedSel")); return; }
+  steps = buildSteps(); si = 0;
+  $("#theater").hidden = false;
+  showStep();
+  $("#tclose").focus();
+}
+function closeTrailer(){ clearTimeout(trTimer); $("#theater").hidden = true; $("#makeBtn").focus(); }
+
+/* events */
+$$(".lang button").forEach(b=>b.addEventListener("click",()=>setLang(b.dataset.l)));
+$$(".tab").forEach(b=>b.addEventListener("click",()=>{ filter=b.dataset.f; render(); }));
+$("#roll").addEventListener("click",e=>{
+  const act = e.target.closest("[data-act]");
+  if (act){
+    const id = +act.dataset.id;
+    if (act.dataset.act==="fav"){ const f = frames.find(x=>x.id===id); f.fav = !f.fav; save(); render(); }
+    else { frames = frames.filter(x=>x.id!==id); selected = selected.filter(x=>x!==id); save(); render(); toast(t("tDel")); }
+    return;
+  }
+  const pic = e.target.closest(".pic");
+  if (pic) toggleSel(+pic.dataset.id);
+});
+$("#roll").addEventListener("keydown",e=>{
+  if ((e.key==="Enter"||e.key===" ") && e.target.classList.contains("pic")){ e.preventDefault(); toggleSel(+e.target.dataset.id); }
+});
+$("#prev").addEventListener("click",()=>$("#roll").scrollBy({left:-420}));
+$("#next").addEventListener("click",()=>$("#roll").scrollBy({left:420}));
+$("#selFav").addEventListener("click",()=>{
+  const favs = frames.filter(f=>f.fav).map(f=>f.id);
+  if (!favs.length){ toast(t("tNoFav")); return; }
+  selected = favs; render(); toast(t("tSelFav"));
+});
+$("#selClear").addEventListener("click",()=>{ selected = []; render(); toast(t("tCleared")); });
+$("#addBtn").addEventListener("click",()=>{
+  const p = $("#addPanel"); p.hidden = false; p.scrollIntoView({behavior:"smooth",block:"center"}); $("#fq").focus({preventScroll:true});
+});
+$("#cancelBtn").addEventListener("click",()=>{ $("#addPanel").hidden = true; });
+$("#kindSeg").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b){ kind=b.dataset.k; renderSegs(); } });
+$("#toneSeg").addEventListener("click",e=>{ const b=e.target.closest("button"); if(b){ tone=+b.dataset.tone; renderSegs(); } });
+$("#saveBtn").addEventListener("click",()=>{
+  const q = $("#fq").value.trim();
+  if (!q){ toast(t("tNeedQ")); $("#fq").focus(); return; }
+  const title = $("#ft").value.trim(), ep = $("#fe").value.trim();
+  const mk = L => {
+    const pre = I18N[L][kind==="drama"?"dramaPre":"moviePre"];
+    const name = title || I18N[L].defTitle;
+    const body = L==="ja" ? `『${name}』` : `“${name}”`;
+    return pre + (L==="ja" ? "" : " ") + body + (ep ? " " + ep : "");
+  };
+  const wrapQ = /^[「“"]/.test(q) ? q : (lang==="ja" ? `「${q}」` : `“${q}”`);
+  const id = frames.reduce((m,f)=>Math.max(m,f.id),0)+1;
+  frames.push({id,q:wrapQ,s:{ja:mk("ja"),en:mk("en")},tone,fav:false});
+  selected.push(id); save();
+  $("#fq").value = ""; $("#ft").value = ""; $("#fe").value = "";
+  $("#addPanel").hidden = true;
+  render(); toast(t("tAdded"));
+  const r = $("#roll"); setTimeout(()=>r.scrollTo({left:r.scrollWidth,behavior:"smooth"}),50);
+});
+$("#makeBtn").addEventListener("click",playTrailer);
+$("#tclose").addEventListener("click",closeTrailer);
+$("#treplay").addEventListener("click",()=>{ si = 0; steps = buildSteps(); showStep(); });
+document.addEventListener("keydown",e=>{ if (e.key==="Escape" && !$("#theater").hidden) closeTrailer(); });
+
+/* init */
+lang = pickLang();
+frames = load();
+selected = frames.filter(f=>f.fav).map(f=>f.id);
+applyLang();
+</script>
+</body>
+</html>
